@@ -96,3 +96,159 @@ def delete_episode(id):
     db.session.commit()  
 
     return jsonify({"message": "Episode deleted successfully."}), 200 
+
+#GUESTS
+# Get all guests
+@app.route('/guests', methods=['GET'])
+def get_guests():
+    guests = []
+    for guest in Guest.query.all():
+        guest_dict = guest.to_dict()
+        guests.append(guest_dict)
+
+    response = jsonify(guests),200
+
+    return response
+
+#Get guest by ID
+@app.route('/guests/<int:id>', methods=['GET'])
+def guests_by_id(id):
+    guest = Guest.query.filter(Guest.id == id).first()
+
+    Guest_dict = guest.to_dict()
+
+    response = make_response(Guest_dict,200)
+
+    return response
+
+#Create new guest
+@app.route('/guests', methods=['POST'])
+def create_guest():
+    data = request.get_json()
+    new_guest = Guest(
+        name=data['name'],
+        occupation=data['occupation']
+    )
+    
+    db.session.add(new_guest)
+    db.session.commit()
+
+    return jsonify(new_guest.to_dict()), 201
+
+#Update guests
+@app.route('/guests/<int:id>', methods=['PUT'])
+def update_guest(id):
+    guest = Guest.query.get(id)
+    if not guest:
+        return jsonify({"error": "Guest not found"}), 404
+
+    data = request.get_json()
+    guest.name = data.get('name', guest.name)
+    guest.occupation = data.get('occupation', guest.occupation)
+    db.session.commit()
+    return jsonify(guest.to_dict()), 200
+
+# Update guest (PATCH)
+@app.route('/guests/<int:id>', methods=['PATCH'])
+def patch_guest(id):
+    guest = Guest.query.get_or_404(id)  
+
+    data = request.get_json()  
+
+    if 'name' in data:
+        guest.name = data['name']
+    if 'occupation' in data:
+        guest.occupation = data['occupation']
+
+    db.session.commit()  
+    return jsonify(guest.to_dict()), 200 
+
+# Delete a guest
+@app.route('/guests/<int:id>', methods=['DELETE'])
+def delete_guest(id):
+    guest = Guest.query.get_or_404(id)  
+
+    db.session.delete(guest)  
+    db.session.commit()  
+
+    return jsonify({"message": "Guest deleted successfully."}), 200
+
+#APPEARANCE
+# Get all appearances
+@app.route('/appearances', methods=['GET'])
+def get_appearances():
+    appearances = []
+    for appearance in Appearance.query.all():
+        appearance_dict = appearance.to_dict()
+        appearance.append(appearance_dict)
+
+    response = jsonify(appearances),200
+
+    return response
+
+#Get appearances by ID
+@app.route('/appearances/<int:id>', methods=['GET'])
+def appearances_by_id(id):
+    appearance = Appearance.query.filter(Appearance.id == id).first()
+
+    Appearance_dict = appearance.to_dict()
+
+    response = make_response(Appearance_dict,200)
+
+    return response
+
+#Create new appearance
+@app.route('/appearances', methods=['POST'])
+def create_appearance():
+    data = request.get_json()
+    new_appearance = Appearance(
+        rating=data['rating'],
+        episode_id=data['episode_id'],
+        guest_id=data['guest_id'],
+    )
+    
+    db.session.add(new_appearance)
+    db.session.commit()
+
+    return jsonify(new_appearance.to_dict()), 201
+
+#Update appearance
+@app.route('/appearances/<int:id>', methods=['PUT'])
+def update_appearance(id):
+    appearance = Appearance.query.get(id)
+    if not appearance:
+        return jsonify({"error": "Appearance not found"}), 404
+
+    data = request.get_json()
+    appearance.rating = data.get('rating', appearance.rating)
+    appearance.episode_id = data.get('episode_id', appearance.episode_id)
+    appearance.guest_id = data.get('guest_id', appearance.guest_id)
+    db.session.commit()
+    return jsonify(appearance.to_dict()), 200
+
+# Update appearance (PATCH)
+@app.route('/appearances/<int:id>', methods=['PATCH'])
+def patch_appearance(id):
+    appearance = Appearance.query.get_or_404(id)  
+
+    data = request.get_json()  
+
+    if 'rating' in data:
+        appearance.rating = data['rating']
+    if 'episode_id' in data:
+        appearance.episode_id = data['episode_id']
+    if 'guest_id' in data:
+        appearance.guest_id = data['guest_id']
+
+    db.session.commit()  
+    return jsonify(appearance.to_dict()), 200 
+
+# Delete a appearance
+@app.route('/appearance/<int:id>', methods=['DELETE'])
+def delete_appearance(id):
+    appearance = Appearance.query.get_or_404(id)  
+
+    db.session.delete(appearance)  
+    db.session.commit()  
+
+    return jsonify({"message": "Appearance deleted successfully."}), 200  
