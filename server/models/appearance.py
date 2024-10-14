@@ -7,6 +7,8 @@ from sqlalchemy_serializer import SerializerMixin
 class Appearance(db.Model):
     __tablename__ = 'appearances'
 
+    serialize_rules =('-guest.appearances', '-episode.appearances',)
+
     id = Column(Integer, primary_key=True)
     rating = Column(Integer, nullable=False)
     episode_id = Column(Integer, ForeignKey('episodes.id',ondelete='CASCADE'), nullable=False)

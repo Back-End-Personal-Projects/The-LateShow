@@ -27,8 +27,7 @@ class Guest(db.Model, SerializerMixin):
             "id": self.id,
             "name": self.name,
             "ocupation": self.occupation,
-            "episodes": [episode.to_dict() for episode in self.episodes if episode is not None]
-        }
+         }
 
     def __repr__(self):
         return f"<Guest(id={self.id}, name='{self.name}'), occupation='{self.occupation}')>"
