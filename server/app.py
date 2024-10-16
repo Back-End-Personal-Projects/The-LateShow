@@ -136,6 +136,7 @@ class Mgeni(Resource):
         
         db.session.add(new_guest)
         db.session.commit()
+        
         response = new_guest.to_dict()
         response_body = make_response(jsonify(response), 201) 
         return response_body

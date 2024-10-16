@@ -26,7 +26,7 @@ class Guest(db.Model, SerializerMixin):
         return {
             "id": self.id,
             "name": self.name,
-            "ocupation": self.occupation,
+            "occupation": self.occupation,
          }
 
     def __repr__(self):
