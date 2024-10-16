@@ -1,22 +1,29 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, validates
 from db import db
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy_serializer import SerializerMixin
 
-class Appearance(db.Model):
+class Appearance(db.Model, SerializerMixin):
     __tablename__ = 'appearances'
 
     serialize_rules =('-guest.appearances', '-episode.appearances',)
 
-    id = Column(Integer, primary_key=True)
-    rating = Column(Integer, nullable=False)
-    episode_id = Column(Integer, ForeignKey('episodes.id',ondelete='CASCADE'), nullable=False)
-    guest_id = Column(Integer, ForeignKey('guests.id',ondelete='CASCADE'), nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, nullable=False)
+    episode_id = db.Column(db.Integer, ForeignKey('episodes.id',ondelete='CASCADE'), nullable=False)
+    guest_id = db.Column(db.Integer, ForeignKey('guests.id',ondelete='CASCADE'), nullable=False)
 
     # Relationships
-    episode = relationship('Episode', back_populates='appearances')
-    guest = relationship('Guest', back_populates='appearances')
+    episode = db.relationship('Episode', back_populates='appearances')
+    guest = db.relationship('Guest', back_populates='appearances')
+
+    #Validations
+    @validates('rating')
+    def validate_rating(self, key, rating):
+        if not (1 <= rating <= 5):
+            raise ValueError(f"Rating must be between 1 and 5, but got {rating}.")
+        return rating
 
     def to_dict(self):
         return{

@@ -10,12 +10,12 @@ class Episode(db.Model, SerializerMixin):
 
     serialize_rules = ('-appearance.episode',)
 
-    id = Column(Integer, primary_key=True)
-    date = Column(String, nullable=False)
-    number = Column(Integer, nullable=False)
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String, nullable=False)
+    number = db.Column(db.Integer, nullable=False)
 
     #Relationship mapping episode to appearance
-    appearances = relationship('Appearance', back_populates='episode', cascade='all, delete-orphan')
+    appearances = db.relationship('Appearance', back_populates='episode', cascade='all, delete-orphan')
 
     #Association proxy to access guests directly
     guests = association_proxy('appearances', 'guest')
