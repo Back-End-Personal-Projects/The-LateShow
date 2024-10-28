@@ -29,13 +29,24 @@ class Appearance(db.Model, SerializerMixin):
         return{
             "id": self.id,
             "rating": self.rating,
-            "episode_id": self.episode_id,
             "guest_id": self.guest_id,
-            "episode": self.episode.to_dict() if self.episode else None,
-            "guest": self.guest.to_dict() if self.guest else None}
+            "episode_id": self.episode_id,
+            "episode": {
+                "date": self.episode.date,
+                "id": self.episode.id,
+                "number": self.episode.number
+            },
+            "guest": {
+                "id": self.guest.id,
+                "name": self.guest.name,
+                "occupation": self.guest.occupation
+            }
+        }
     
     def __repr__(self):
-        return (f"<Appearance(id={self.id}, "
-                f"rating={self.rating}, "
-                f"guest_id={self.guest_id}, "
-                f"episode_id={self.episode_id})>")
+            return (f"<Appearance(id={self.id}, "
+                    f"rating={self.rating}, "
+                    f"guest_id={self.guest_id}, "
+                    f"episode_id={self.episode_id}, "
+                    f"guest_name='{self.guest.name}', "
+                    f"episode_date='{self.episode.date}')>")

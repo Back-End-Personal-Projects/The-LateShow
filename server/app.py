@@ -45,7 +45,7 @@ class Episodi(Resource):
         data = request.get_json()
 
         if not all(key in data for key in ('date', 'number')):
-            return jsonify({"error": "Missing required fields: date, number"}), 400
+            return make_response(jsonify({"error": "Missing required fields: date, number"}), 400)
 
         new_episode = Episode(
             date=data['date'],
@@ -65,7 +65,7 @@ class EpisodebyID(Resource):
         episode = Episode.query.filter(Episode.id == id).first()
 
         if not episode:
-            return jsonify({"error": "Episode not found"}), 404
+            return make_response(jsonify({"error": "Episode not found"}), 404)
         
         Episode_dict = episode.to_dict()
 
@@ -78,7 +78,7 @@ class EpisodebyID(Resource):
     def put(self,id):
         episode = Episode.query.get(id)
         if not episode:
-            return jsonify({"error": "Episode not found"}), 404
+            return make_response(jsonify({"error": "Episode not found"}), 404)
 
         data = request.get_json()
         episode.date = data.get('date', episode.date)
@@ -150,7 +150,7 @@ class GuestbyID(Resource):
         guest = Guest.query.filter(Guest.id == id).first()
         
         if not guest:
-            return jsonify({"error": "Guest not found"}), 404
+            return make_response(jsonify({"error": "Guest not found"}), 404)
         
         Guest_dict = guest.to_dict()
 
@@ -163,7 +163,7 @@ class GuestbyID(Resource):
     def put(self,id):
         guest = Guest.query.get(id)
         if not guest:
-            return jsonify({"error": "Guest not found"}), 404
+            return make_response(jsonify({"error": "Guest not found"}), 404)
 
         data = request.get_json()
         guest.name = data.get('name', guest.name)
@@ -219,7 +219,7 @@ class Appearanc (Resource):
         def post(self):
             data = request.get_json()
             try:
-                #rating = data['rating']
+                rating = data['rating']
                 #validate_rating(rating)
 
                 new_appearance = Appearance(
@@ -234,7 +234,7 @@ class Appearanc (Resource):
                 return make_response(jsonify(new_appearance.to_dict()), 201)
             
             except ValueError as e:
-                return jsonify({"error": str(e)}), 400
+                return make_response(jsonify({"error": str(e)}), 400)
             
 api.add_resource(Appearanc,'/appearances')           
 
@@ -245,7 +245,7 @@ class AppearancebyID(Resource):
             appearance = Appearance.query.filter(Appearance.id == id).first()
             
             if not appearance:
-                return jsonify({"error": "Appearance not found"}), 404
+                return make_response(jsonify({"error": "Appearance not found"}), 404)
         
             appearance_dict = jsonify(appearance.to_dict())
 
@@ -254,20 +254,18 @@ class AppearancebyID(Resource):
             return response
 
         
-
-
         #Update appearance
         
         def put(self, id):
             appearance = Appearance.query.get(id)
         
             data = request.get_json()
-            #if 'rating' in data:
-                #validate_rating(data['rating'])
-            appearance.rating = data['rating']
-
-            appearance.episode_id = data.get('episode_id', appearance.episode_id)
-            appearance.guest_id = data.get('guest_id', appearance.guest_id)
+            if 'rating' in data:
+                appearance.rating = data['rating']
+            if 'episode_id' in data:
+                appearance.episode_id = data.get('episode_id', appearance.episode_id)
+            if 'guest_id' in data:
+                appearance.guest_id = data.get('guest_id', appearance.guest_id)
         
             db.session.commit()
             return make_response(jsonify(appearance.to_dict()), 200)
